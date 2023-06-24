@@ -42,9 +42,17 @@ async def create_employee(employee: Employee):
     db.commit()
     return {'message': 'Employee created successfully'}
 
+# Удаление работника
+@app.delete("/employees/{login}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_employee_by_login(login: str):
+    employee = db.query(models.Employee).filter(models.Employee.login == login).first()
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    db.delete(employee)
+    db.commit()
 
 # Создание токена через логин и пароль
-@app.post("/token")
+@app.post("/token", status_code=status.HTTP_201_CREATED)
 async def create_token(login: str, password: str):
     employee = db.query(models.Employee).filter(models.Employee.login == login).first()
     if employee and pwd_context.verify(password, employee.password):
