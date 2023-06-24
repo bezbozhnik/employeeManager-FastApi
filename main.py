@@ -38,6 +38,7 @@ async def create_employee(employee: Employee):
         token=employee.token,
         token_expiration=employee.token_expiration,
     )
+    db.rollback()
     db.add(new_employee)
     db.commit()
     return {'message': 'Employee created successfully'}
